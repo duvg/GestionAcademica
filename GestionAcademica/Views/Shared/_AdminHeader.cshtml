@@ -1,0 +1,60 @@
+﻿@{
+    //ViewData["AdminTitle"] = "Categories";
+    this.ViewContext.HttpContext.Items["AdminTitle"] = "Categories";
+    string requestedController = @ViewContext.RouteData.Values["controller"].ToString();
+    var routeName = Url.ActionContext.RouteData.Values["action"].ToString();
+    string AdminTitle = "";
+
+    // For Home pages
+    switch (@routeName)
+    {
+        case "Index":
+            AdminTitle = "Inicio";
+            break;
+        case "Contact":
+            AdminTitle = "Contactanos";
+            break;
+        case "Privacy":
+            AdminTitle = "Politicas de privacidad";
+            break;
+    }
+
+    // For Crud Operations
+    switch (@requestedController)
+    {
+        case "Categories":
+            AdminTitle = "Administrar Categorias";
+            break;
+        case "Courses":
+            AdminTitle = "Administrar Courses";
+            break;
+        case "Students":
+            AdminTitle = "Administrar Estudiantes";
+            break;
+        case "Instructors":
+            AdminTitle = "Administrar Instructores";
+            break;
+        case "Subjects":
+            AdminTitle = "Administrar Asignaturas";
+            break;
+        case "Enrollments":
+            AdminTitle = "Administrar Matriculas";
+            break;
+        case "About":
+            AdminTitle = "Quienes Somos";
+            break;
+        case "Privacy":
+            AdminTitle = "Politicas de privacidad";
+            break;
+        case "Contact":
+            AdminTitle = "Contactanos";
+            break;
+        default:
+
+            break;
+
+    }
+
+}
+
+<h1>@AdminTitle</h1>
