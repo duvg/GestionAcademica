@@ -18,8 +18,9 @@
         <div class="card-body login-card-body">
             <p class="login-box-msg">Registrate o inicia sesión</p>
             <hr />
-            <div asp-validation-summary="All" class="text-danger"></div>
+            
             <form id="account" method="post">
+                <div asp-validation-summary="All" class="text-danger"></div>
                 <div class="input-group mb-3">
                     <input asp-for="Input.Email" type="email" class="form-control" placeholder="Email">
                     <div class="input-group-append">

@@ -3,8 +3,34 @@
 @{
     ViewData["Title"] = "Locked out";
 }
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Cuenta Bloqueada";
+    ViewData["ClassBody"] = "sc";
+}
 
-<header>
-    <h1 class="text-danger">@ViewData["Title"]</h1>
-    <p class="text-danger">This account has been locked out, please try again later.</p>
-</header>
+<div class="row justify-content-center">
+    <div class="col-md-6 mt-5">
+
+        <div class="login-logo">
+            Gestión Academica
+        </div>
+        <div class="card">
+            <div class="card-body login-card-body">
+                <h1>@ViewData["Title"]</h1>
+                <p>
+                    <strong>Cuenta bloqueada!</strong> <br />
+                    Esta cuenta ha sido bloqueada, porfavor intenta más tarde!
+                </p>
+
+                <a asp-page="./Login"> <i class="fas fa-home"></i> Regresar al inicio</a>
+
+
+                @section Scripts {
+                    <partial name="_ValidationScriptsPartial" />
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

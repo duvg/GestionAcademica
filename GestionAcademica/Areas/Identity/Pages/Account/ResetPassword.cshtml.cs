@@ -48,7 +48,7 @@ namespace GestionAcademica.Areas.Identity.Pages.Account
         {
             if (code == null)
             {
-                return BadRequest("Debe ingresar u código para restablecer el password.");
+                return BadRequest("Debe ingresar un código para restablecer el password.");
             }
             else
             {
