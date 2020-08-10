@@ -52,4 +52,9 @@
     <Content Remove="wwwroot\lib\fontawesome-free\webfonts\fa-brands-400.ttf" />
     <Content Remove="wwwroot\lib\fontawesome-free\webfonts\fa-regular-400.eot" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\Role\" />
+    <Folder Include="TagHelpers\" />
+    <Folder Include="Helpers\" />
+  </ItemGroup>
 </Project>

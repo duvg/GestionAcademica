@@ -23,17 +23,19 @@ namespace GestionAcademica.Areas.Identity.Pages.Account
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
-
+        private readonly RoleManager<IdentityRole> _roleManager;
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _roleManager = roleManager;
         }
 
         [BindProperty]
@@ -91,6 +93,32 @@ namespace GestionAcademica.Areas.Identity.Pages.Account
                     await _emailSender.SendEmailAsync(Input.Email, "Confirma tu email",
                         $"Porfavor confirma tue cuenta<a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>Has click aqui!</a>.");
 
+                    // check if role user exist
+                    var roleUser = await _roleManager.RoleExistsAsync("User");
+                    // add user role to user
+                    if (!roleUser)
+                    {
+                        var role = new IdentityRole("User");
+                        var res = await _roleManager.CreateAsync(role);
+
+                        if (res.Succeeded)
+                        {
+                            await _userManager.AddToRoleAsync(user, "User");
+                            await _signInManager.SignInAsync(user, isPersistent: false);
+                            _logger.LogInformation("Cuenta de usuario creada");
+                            return LocalRedirect(returnUrl);
+                        }
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(user, "User");
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        _logger.LogInformation("Cuenta de usuario creada");
+                    }
+                    
+                    
+
+                    /*
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
                         return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
@@ -99,7 +127,7 @@ namespace GestionAcademica.Areas.Identity.Pages.Account
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         return LocalRedirect(returnUrl);
-                    }
+                    }*/
                 }
                 foreach (var error in result.Errors)
                 {
