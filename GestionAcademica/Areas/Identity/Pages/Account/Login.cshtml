@@ -8,36 +8,39 @@
 }
 
 
-
 <div class="login-box">
     <div class="login-logo">
         Gestión Academica
     </div>
+    <div id="formErrors">
+        <div class=" alert alert-danger alert-dismissible">
+            <h4><i class="icon fa fa-ban"></i> Ups algo salio mal!</h4>
+            <div asp-validation-summary="All" id="ValidationSummary"></div>
+            <div class="errors"></div>
+        </div>
+    </div>
+    
     <!-- /.login-logo -->
     <div class="card">
         <div class="card-body login-card-body">
-            <p class="login-box-msg">Registrate o inicia sesión</p>
+            <h5 class="login-box-msg">Inicia sesión</h5>
             <hr />
-            
             <form id="account" method="post">
-                <div asp-validation-summary="All" class="text-danger"></div>
                 <div class="input-group mb-3">
-                    <input asp-for="Input.Email" type="email" class="form-control" placeholder="Email">
+                    <input asp-for="Input.UserName" type="text" class="form-control" placeholder="Usuario" data-name="Usuario" required>
                     <div class="input-group-append">
                         <div class="input-group-text">
                             <span class="fas fa-envelope"></span>
                         </div>
                     </div>
-                    <span asp-validation-for="Input.Email" class="text-danger"></span>
                 </div>
                 <div class="input-group mb-3">
-                    <input asp-for="Input.Password" type="password" class="form-control" placeholder="Password">
+                    <input asp-for="Input.Password" type="password" class="form-control" placeholder="Password" data-name="Contraseña" required>
                     <div class="input-group-append">
                         <div class="input-group-text">
                             <span class="fas fa-lock"></span>
                         </div>
                     </div>
-                    <span asp-validation-for="Input.Password"></span>
                 </div>
                 <div class="row">
                     <div class="col-8">
@@ -65,6 +68,8 @@
                     <i class="fab fa-google-plus mr-2"></i> Iniciar sesión con Google+
                 </a>
             </div>
+
+            
             <!-- /.social-auth-links -->
 
             <p class="mb-1">
@@ -82,5 +87,115 @@
 
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    
+
+    <script>
+        $(document).ready(function () {
+            
+            if ($("#ValidationSummary").text().trim().length > 0) {
+                $("#formErrors").show();
+            }
+
+            function vaidateForm() {
+                $("#account").validate({
+                    invalidHandler: function (event, validator) {
+
+                        $(".errors").append("Todos los campos son requeridos");
+                        $("#formErrors").show();
+                        doBounce($(".login-box"), 7, '15px', 40);
+
+                        
+                        
+                    },
+                    errorPlacement: function (error, element) {
+                        error.insertAfter(element.next('span').children());
+                    },
+                    highlight: function (element) {
+                        $(element).attr("placeholder", $(element).data('name') + ' es requerido');
+                        $(element).addClass('inputError');
+                        console.log("Entrando en el error");
+                        $(element).parents('div.input-group').addClass('borderValidation');
+                        $(element).next('span').show();
+                    },
+                    unhighlight: function (element) {
+                        $(element).parents('div.login-card-body').css({
+                            'border': 'none'
+                        });
+                        $(element).parents('div.input-group').removeClass('borderValidation');
+                        //$('#.formErrors').empty();
+                    }
+                });
+            }
+
+            function doBounce(element, times, distance, speed) {
+
+                for (var i = 0; i < times; i++) {
+                    element.animate({ marginLeft: '-=' + distance }, speed)
+                        .animate({ marginLeft: '+=' + distance }, speed);
+                }
+
+            }
+
+            vaidateForm();
+            
+
+            $(".login").click(function () {
+                vaidateForm();
+            });
+        });
+
+            /*
+            // Show validation sumary errors
+            if ($('#ValidationSummary').text().trim().length > 0) {
+                $('.errorForm').show();
+            }
+
+            function validateForm() {
+                $("#account").validate({
+                    invalidHandler: function (event, validator) {
+                        //$("#formErrors").html("Todos los campos son requeridos");
+                    },
+                    errorPlacement: function (error, element) {
+                        error.insertAfter(element.next('span').children());
+                    },
+                    highlight: function (element) {
+                        $(element).attr("placeholder", $(element).data('name') + ' es requerido');
+                        $(element).addClass('inputError');
+                        console.log("Entrando en el error");
+                        $(element).parents('div.input-group').addClass('borderValidation');
+                        $(element).next('span').show();
+                    },
+                    unhighlight: function (element) {
+                        $(element).parents('div.login-card-body').css({
+                            'border': 'none'
+                        });
+                        $(element).parents('div.input-group').removeClass('borderValidation');
+                        //$('#.formErrors').empty();
+                    }
+                });
+            }
+
+            validateForm();
+
+            $(".submit").click(function (e) {
+                e.preventDefault();
+                $('.errorForm').fadeOut();
+
+                validateForm();
+
+                console.log($('#account').valid());
+                if ($('#account').valid()) {
+                    $('#account').submit();
+                } else {
+                    $('.errorForm').show();
+                   
+                    return false;
+                }
+               
+            });
+            
+        });*/
+    </script>
+    
+    
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using GestionAcademica.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -19,14 +20,14 @@ namespace GestionAcademica.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class RegisterModel : PageModel
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
+        private readonly UserManager<AppUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly RoleManager<IdentityRole> _roleManager;
         public RegisterModel(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager,
+            UserManager<AppUser> userManager,
+            SignInManager<AppUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
             RoleManager<IdentityRole> roleManager)
@@ -48,9 +49,42 @@ namespace GestionAcademica.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
+            public int DocumentType { get; set; }
+
+            [Required]
+            public string Document { get; set; }
+
+            [Required]
+            [Display(Name = "Nombre")]
+            public string Name { get; set; }
+
+            [Required]
+            [Display(Name = "Apellidos")]
+            public string Surname { get; set; }
+
+            [Required]
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
+
+            [Required]
+            [Display(Name = "Fecha de Nacimiento")]
+            public string Birthdate { get; set; }
+
+            public string Gender { get; set; }
+
+            [Required(AllowEmptyStrings = true)]
+            [DisplayFormat(ConvertEmptyStringToNull = false)]
+            public string Address { get; set; }
+
+            [Required(AllowEmptyStrings = true)]
+            [DisplayFormat(ConvertEmptyStringToNull = false)]
+            public string Phone { get; set; }
+
+            public string Telephone { get; set; }
+            [Required(ErrorMessage = "El capo usuario es requerido")]
+            [Display(Name = "Usuario")]
+            public string UserName { get; set; }
 
             [Required(ErrorMessage="El password es requerido")]
             [StringLength(100, ErrorMessage = "El campo {0} debe tener minimo {2} y maximo {1} caracteres de longitud", MinimumLength = 6)]
@@ -73,10 +107,24 @@ namespace GestionAcademica.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl = returnUrl ?? Url.Content("~/");
+            
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser { UserName = Input.Email, Email = Input.Email };
+                var user = new AppUser
+                {
+                    DocumentType = Input.DocumentType,
+                    Document = Input.Document,
+                    Name = Input.Name,
+                    Surname = Input.Surname,
+                    UserName = Input.UserName,
+                    Email = Input.Email,
+                    Birthdate = Convert.ToDateTime(Input.Birthdate),
+                    Gender = Input.Gender,
+                    Address = Input.Address,
+                    Phone = Input.Phone,
+                    Telephone = Input.Telephone
+                };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
@@ -114,6 +162,7 @@ namespace GestionAcademica.Areas.Identity.Pages.Account
                         await _userManager.AddToRoleAsync(user, "User");
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         _logger.LogInformation("Cuenta de usuario creada");
+                        return LocalRedirect(returnUrl);
                     }
                     
                     

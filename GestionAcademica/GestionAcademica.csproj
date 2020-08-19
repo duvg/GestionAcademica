@@ -56,5 +56,6 @@
     <Folder Include="Views\Role\" />
     <Folder Include="TagHelpers\" />
     <Folder Include="Helpers\" />
+    <Folder Include="Data\Migrations\" />
   </ItemGroup>
 </Project>

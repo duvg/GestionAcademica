@@ -14,6 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Identity.UI.Services;
 
+using GestionAcademica.Models;
+
 namespace GestionAcademica
 {
     public class Startup
@@ -34,13 +36,22 @@ namespace GestionAcademica
             */
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("ApplicationDbContext")));
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
-            
+               options.UseSqlServer(Configuration.GetConnectionString("ApplicationDbContext")));
 
+           
+            services
+                .AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<IdentityRole>()
+                .AddSignInManager<SignInManager<AppUser>>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
+
+            //services.AddScoped<UserManager<AppUser>, UserManager<AppUser>>();
+            
             services.AddControllersWithViews();
             services.AddRazorPages();
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -66,6 +77,7 @@ namespace GestionAcademica
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
+                
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
